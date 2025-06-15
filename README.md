@@ -194,17 +194,17 @@ npx react-scripts build
 ## API Endpoints
 
 ### Authentication
-- POST /api/register - Register a new user
-- POST /api/login - Login and get access token
-- POST /api/logout - Logout and invalidate token
+- POST /register - Register a new user
+- POST /login - Login and get access token
+- POST /logout - Logout and invalidate token
 
 ### Products
-- GET /api/products - Get all products
-- GET /api/products/:id - Get a specific product
-- GET /api/products/user - Get current user's products
-- POST /api/products - Create a new product
-- PUT /api/products/:id - Update a product
-- DELETE /api/products/:id - Delete a product
+- GET /products - Get all products
+- GET /products/:id - Get a specific product
+- GET /products/user - Get current user's products
+- POST /products - Create a new product
+- PUT /products/:id - Update a product
+- DELETE /products/:id - Delete a product
 
 ## Usage
 
@@ -216,3 +216,43 @@ npx react-scripts build
 3. View your products on the My Products page
 4. Add new products using the Add Product page
 5. Edit or delete your products from the My Products page
+
+## Deployment Screenshots
+
+Here are screenshots showing the deployment process and application in action:
+
+1. **1 updated the linux system.png**  
+   Screenshot showing the process of updating the Linux system before deployment.
+
+2. **2 installed nginx service.png**  
+   Screenshot showing the installation of Nginx web server.
+
+3. **3 install python3 and necessary modules.png**  
+   Screenshot showing the installation of Python 3 and required modules.
+
+4. **4 installed postgres.png**  
+   Screenshot showing the installation of PostgreSQL database.
+
+5. **5 created postgres database.png**  
+   Screenshot showing the creation of the PostgreSQL database for the application.
+
+6. **6 create products table.png**  
+   Screenshot showing the creation of the products table in the database.
+
+7. **7 running app.png**  
+   Screenshot showing the application running in development mode.
+
+8. **8 tested nginx.png**  
+   Screenshot showing the testing of Nginx configuration.
+
+9. **9 view of records in browser.png**  
+   Screenshot showing the application displaying product records in the browser.
+
+10. **10 running application using the background service.png**  
+    Screenshot showing the application running as a background service.
+
+11. **11 browser after implementing https.png**  
+    Screenshot showing the application in the browser after implementing HTTPS.
+
+12. **12 shell after implementing https.png**  
+    Screenshot showing the shell commands after implementing HTTPS security.
