@@ -1,5 +1,9 @@
 # Product Catalog Application
 
+## Live Demo: [https://3.252.76.56](https://3.252.76.56)
+
+**Note:** The application uses a self-signed SSL certificate. You will need to accept the security warning in your browser to continue. This demo URL may become unavailable once the EC2 instance is terminated.
+
 A full-stack application with Flask backend and React frontend for managing product catalogs.
 
 ## Project Structure
