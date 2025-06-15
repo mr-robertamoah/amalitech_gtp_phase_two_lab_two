@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import api from '../api';
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -20,17 +21,7 @@ const ProductForm = () => {
     if (isEditMode) {
       const fetchProduct = async () => {
         try {
-          const response = await fetch(`/products/${id}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to fetch product');
-          }
-          
-          const data = await response.json();
+          const data = await api.getProduct(id);
           setProduct({
             name: data.name,
             description: data.description || '',
@@ -43,7 +34,7 @@ const ProductForm = () => {
 
       fetchProduct();
     }
-  }, [id, token, isEditMode]);
+  }, [id, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,25 +50,16 @@ const ProductForm = () => {
     setError(null);
 
     try {
-      const url = isEditMode ? `/products/${id}` : '/products';
-      const method = isEditMode ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          name: product.name,
-          description: product.description,
-          price: parseFloat(product.price)
-        })
-      });
-      
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to save product');
+      const productData = {
+        name: product.name,
+        description: product.description,
+        price: parseFloat(product.price)
+      };
+
+      if (isEditMode) {
+        await api.updateProduct(id, productData, token);
+      } else {
+        await api.createProduct(productData, token);
       }
       
       navigate('/my-products');

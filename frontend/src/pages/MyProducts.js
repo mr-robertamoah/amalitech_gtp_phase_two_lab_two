@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
+import api from '../api';
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
@@ -11,17 +12,7 @@ const MyProducts = () => {
   useEffect(() => {
     const fetchUserProducts = async () => {
       try {
-        const response = await fetch('/products/user', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch your products');
-        }
-        
-        const data = await response.json();
+        const data = await api.getUserProducts(token);
         setProducts(data);
         setLoading(false);
       } catch (err) {
@@ -36,17 +27,7 @@ const MyProducts = () => {
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`/products/${productId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to delete product');
-        }
-        
+        await api.deleteProduct(productId, token);
         setProducts(products.filter(product => product.id !== productId));
       } catch (err) {
         setError(err.message);

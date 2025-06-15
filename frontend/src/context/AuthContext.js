@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import api from '../api';
 
 export const AuthContext = createContext();
 
@@ -20,20 +21,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-      
+      const data = await api.login({ username, password });
       setUser(data.user);
       setToken(data.access_token);
       setLoading(false);
@@ -49,20 +37,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
-      }
-      
+      const data = await api.register({ username, email, password });
       setLoading(false);
       return data;
     } catch (err) {
@@ -76,12 +51,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       if (token) {
-        await fetch('/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        await api.logout(token);
       }
     } catch (err) {
       console.error('Logout error:', err);

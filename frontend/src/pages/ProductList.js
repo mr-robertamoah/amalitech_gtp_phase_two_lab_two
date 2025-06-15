@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
+import api from '../api';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -9,11 +10,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
+        const data = await api.getAllProducts();
         setProducts(data);
         setLoading(false);
       } catch (err) {
