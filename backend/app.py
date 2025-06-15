@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import Bcrypt
@@ -12,6 +12,8 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+api = Blueprint('api', __name__, url_prefix='/api')
 
 # Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'postgresql+psycopg2://catalog_user:catalog_pass@localhost/catalog')
@@ -70,7 +72,7 @@ class Product(db.Model):
         }
 
 # Authentication routes
-@app.route("/register", methods=["POST"])
+@api.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
     
@@ -97,7 +99,7 @@ def register():
     
     return jsonify({"message": "User registered successfully"}), 201
 
-@app.route("/login", methods=["POST"])
+@api.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
     
@@ -120,7 +122,7 @@ def login():
     }
     return jsonify({"access_token": access_token, "user": user_info}), 200
 
-@app.route("/logout", methods=["POST"])
+@api.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
     jti = get_jwt()["jti"]
@@ -128,12 +130,12 @@ def logout():
     return jsonify({"message": "Successfully logged out"}), 200
 
 # Product routes
-@app.route("/products", methods=["GET"])
+@api.route("/products", methods=["GET"])
 def get_products():
     products = Product.query.all()
     return jsonify([product.to_dict() for product in products])
 
-@app.route("/products/user", methods=["GET"])
+@api.route("/products/user", methods=["GET"])
 @jwt_required()
 def get_user_products():
     # Convert string identity back to integer for database query
@@ -141,7 +143,7 @@ def get_user_products():
     products = Product.query.filter_by(user_id=user_id).all()
     return jsonify([product.to_dict() for product in products])
 
-@app.route("/products", methods=["POST"])
+@api.route("/products", methods=["POST"])
 @jwt_required()
 def create_product():
     # Convert string identity back to integer for database query
@@ -163,7 +165,7 @@ def create_product():
     
     return jsonify(new_product.to_dict()), 201
 
-@app.route("/products/<int:product_id>", methods=["PUT"])
+@api.route("/products/<int:product_id>", methods=["PUT"])
 @jwt_required()
 def update_product(product_id):
     # Convert string identity back to integer for database query
@@ -187,7 +189,7 @@ def update_product(product_id):
     
     return jsonify(product.to_dict())
 
-@app.route("/products/<int:product_id>", methods=["DELETE"])
+@api.route("/products/<int:product_id>", methods=["DELETE"])
 @jwt_required()
 def delete_product(product_id):
     # Convert string identity back to integer for database query
@@ -203,13 +205,17 @@ def delete_product(product_id):
     
     return jsonify({"message": "Product deleted successfully"})
 
-@app.route("/products/<int:product_id>", methods=["GET"])
+@api.route("/products/<int:product_id>", methods=["GET"])
 def get_product(product_id):
     product = Product.query.get_or_404(product_id)
     return jsonify(product.to_dict())
 
+# Register the API blueprint
+app.register_blueprint(api)
+
 if __name__ == "__main__":
     with app.app_context():
+        db.drop_all()  # Drop all tables (for development purposes, remove in production)
         db.create_all()
         # Add sample data if database is empty
         if User.query.count() == 0:
